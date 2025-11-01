@@ -9,10 +9,18 @@
     body {
       margin: 0;
       font-family: sans-serif;
-      background-image: url('https://images.unsplash.com/photo-1604908812483-69474a4ef56e?auto=format&fit=crop&w=1950&q=80');
+    }
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('https://proyecto-queso-chat.netlify.app/raton%20con%20zanahoria.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      z-index: -1;
     }
     .chat-wrapper {
       display: flex;
@@ -20,7 +28,6 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      backdrop-filter: brightness(1);
       background-color: rgba(255, 255, 255, 0.7);
     }
     h1 {
@@ -72,6 +79,7 @@
   </style>
 </head>
 <body>
+<div class="background"></div>
 <div class="chat-wrapper">
   <h1>🍽️ Proyecto Queso</h1>
   <div class="chat-container">
