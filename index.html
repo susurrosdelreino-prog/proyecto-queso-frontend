@@ -26,35 +26,75 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       height: 100vh;
+      padding-top: 40px;
       background-color: rgba(255, 255, 255, 0.7);
+      animation: fadeIn 1.2s ease-in-out;
     }
     h1 {
       color: #333;
       margin-bottom: 10px;
       text-shadow: 1px 1px 2px #fff;
+      animation: slideDown 1s ease forwards;
+    }
+    .description {
+      font-size: 16px;
+      color: #444;
+      max-width: 800px;
+      text-align: center;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 10px 20px;
+      border-radius: 10px;
+      opacity: 0;
+      animation: fadeIn 1.5s ease forwards;
+      animation-delay: 0.5s;
     }
     .chat-container {
       background: #ffffff;
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      max-width: 500px;
-      width: 90%;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      max-width: 900px;
+      width: 95%;
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+      animation: fadeInUp 1.5s ease forwards;
+      animation-delay: 1s;
+      opacity: 0;
+    }
+    #suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .suggestion {
+      background: #e0f0ff;
+      border: 1px solid #b0d4f1;
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .suggestion:hover {
+      background: #cce6ff;
     }
     #messages {
-      height: 300px;
+      flex: 1;
       overflow-y: auto;
       border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
       background: #ffffff;
       color: #000000;
+      font-size: 16px;
     }
     .message {
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .user { font-weight: bold; color: #1a73e8; }
     .bot { font-weight: bold; color: #0b8043; }
@@ -64,65 +104,55 @@
     }
     #userInput {
       flex: 1;
-      padding: 8px;
-      border-radius: 8px;
+      padding: 10px;
+      border-radius: 10px;
       border: 1px solid #ccc;
+      font-size: 16px;
     }
     button {
-      padding: 8px 16px;
+      padding: 10px 20px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background: #1a73e8;
       color: white;
+      font-size: 16px;
       cursor: pointer;
     }
-  </style>
-</head>
-<body>
-<div class="background"></div>
-<div class="chat-wrapper">
-  <h1>🍽️ Proyecto Queso</h1>
-  <div class="chat-container">
-    <div id="messages"></div>
-    <form id="inputForm">
-      <input type="text" id="userInput" placeholder="Escribe tu pregunta..." required />
-      <button type="submit">Enviar</button>
-    </form>
-  </div>
-</div>
-
-<script>
-  const form = document.getElementById('inputForm');
-  const input = document.getElementById('userInput');
-  const messages = document.getElementById('messages');
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const userMsg = input.value;
-    appendMessage('user', userMsg);
-    input.value = '';
-
-    const res = await fetch('https://proyecto-queso-backend.onrender.com/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userMsg })
-    });
-
-    const data = await res.json();
-    if (data.status === 'ok') {
-      appendMessage('bot', data.reply);
-    } else {
-      appendMessage('bot', data.message || 'Error desconocido.');
+    #upgradePrompt {
+      display: none;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+      animation: fadeIn 1s ease forwards;
     }
-  });
-
-  function appendMessage(role, text) {
-    const div = document.createElement('div');
-    div.className = 'message';
-    div.innerHTML = `<span class="${role}">${role === 'user' ? 'Tú' : 'Queso'}:</span> ${text}`;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-  }
-</script>
-</body>
-</html>
+    #upgradePrompt button {
+      margin-top: 15px;
+      padding: 15px 30px;
+      font-size: 20px;
+      font-weight: bold;
+      background: linear-gradient(45deg, #ff9800, #ff5722);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    #upgradePrompt button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideDown {
+      0% { transform: translateY(-30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+  </style>
