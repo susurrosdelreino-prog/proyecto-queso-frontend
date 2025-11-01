@@ -124,35 +124,116 @@
       font-size: 20px;
       font-weight: bold;
       margin-top: 20px;
-      animation: fadeIn 1s ease forwards;
     }
     #upgradePrompt button {
-      margin-top: 15px;
-      padding: 15px 30px;
-      font-size: 20px;
+      margin-top: 10px;
+      padding: 12px 24px;
+      font-size: 18px;
       font-weight: bold;
-      background: linear-gradient(45deg, #ff9800, #ff5722);
+      background-color: #ff9800;
       border: none;
-      border-radius: 12px;
+      border-radius: 8px;
       color: white;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    #upgradePrompt button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
+
     @keyframes fadeInUp {
       0% { opacity: 0; transform: translateY(20px); }
       100% { opacity: 1; transform: translateY(0); }
     }
+
     @keyframes slideDown {
       0% { transform: translateY(-30px); opacity: 0; }
       100% { transform: translateY(0); opacity: 1; }
     }
   </style>
+</head>
+<body>
+<div class="background"></div>
+<div class="chat-wrapper">
+  <h1>🍽️ Proyecto Queso</h1>
+  <p class="description">Organiza tu menú semanal con recetas deliciosas, listas de la compra optimizadas y consejos para ahorrar sin renunciar al sabor. ¡Tu asistente personal de cocina inteligente!</p>
+  <div class="chat-container">
+    <div id="suggestions">
+      <div class="suggestion">Menú barato para dos personas</div>
+      <div class="suggestion">Recetas sin horno para picnic</div>
+      <div class="suggestion">Lista para 5 comidas en oficina</div>
+      <div class="suggestion">Ideas frías para el campo</div>
+    </div>
+    <div id="messages"></div>
+    <form id="inputForm">
+      <input type="text" id="userInput" placeholder="Escribe tu pregunta..." required />
+      <button type="submit">Enviar</button>
+    </form>
+    <div id="upgradePrompt">
+      Has llegado al límite de mensajes gratuitos.<br />
+      <button onclick="alert('Aquí irá el sistema de pago')">Ampliar con suscripción</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('inputForm');
+  const input = document.getElementById('userInput');
+  const messages = document.getElementById('messages');
+  const suggestions = document.getElementById('suggestions');
+  const upgradePrompt = document.getElementById('upgradePrompt');
+  const suggestionButtons = document.querySelectorAll('.suggestion');
+
+  let messageCount = 0;
+  const maxFreeMessages = 3;
+
+  suggestionButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      input.value = btn.textContent;
+      suggestions.style.display = 'none';
+      form.requestSubmit();
+    });
+  });
+
+  input.addEventListener('input', () => {
+    if (input.value.length > 0) {
+      suggestions.style.display = 'none';
+    }
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (messageCount >= maxFreeMessages) {
+      upgradePrompt.style.display = 'block';
+      return;
+    }
+
+    const userMsg = input.value;
+    appendMessage('user', userMsg);
+    input.value = '';
+
+    const res = await fetch('https://proyecto-queso-backend.onrender.com/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: userMsg })
+    });
+
+    const data = await res.json();
+    if (data.status === 'ok') {
+      appendMessage('bot', data.reply);
+      messageCount++;
+    } else {
+      appendMessage('bot', data.message || 'Error desconocido.');
+    }
+  });
+
+  function appendMessage(role, text) {
+    const div = document.createElement('div');
+    div.className = 'message';
+    div.innerHTML = `<span class="${role}">${role === 'user' ? 'Tú' : 'Queso'}:</span> ${text}`;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+</script>
+</body>
+</html>
