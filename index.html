@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat Proyecto Queso</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: url('https://images.unsplash.com/photo-1604908812483-69474a4ef56e') center/cover no-repeat;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      backdrop-filter: blur(5px);
+    }
+    .chat-container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      max-width: 500px;
+      width: 100%;
+    }
+    #messages {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      background: #ffffff;
+      color: #000000;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .user { font-weight: bold; color: #1a73e8; }
+    .bot { font-weight: bold; color: #0b8043; }
+    #inputForm {
+      display: flex;
+      gap: 10px;
+    }
+    #userInput {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #1a73e8;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div id="messages"></div>
+    <form id="inputForm">
+      <input type="text" id="userInput" placeholder="Escribe tu pregunta..." required />
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('inputForm');
+    const input = document.getElementById('userInput');
+    const messages = document.getElementById('messages');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userMsg = input.value;
+      appendMessage('user', userMsg);
+      input.value = '';
+
+      const res = await fetch('https://proyecto-queso-backend.onrender.com/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMsg })
+      });
+
+      const data = await res.json();
+      if (data.status === 'ok') {
+        appendMessage('bot', data.reply);
+      } else {
+        appendMessage('bot', data.message || 'Error desconocido.');
+      }
+    });
+
+    function appendMessage(role, text) {
+      const div = document.createElement('div');
+      div.className = 'message';
+      div.innerHTML = `<span class="${role}">${role === 'user' ? 'Tú' : 'Queso'}:</span> ${text}`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+  </script>
+</body>
+</html>
+index.html
