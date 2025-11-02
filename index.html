@@ -16,7 +16,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-image: url('https://proyecto-queso-chat.netlify.app/raton%20con%20zanahoria.jpg');
+      background-color: #e5f7e0;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -72,15 +72,23 @@
       margin-bottom: 10px;
     }
     .suggestion {
-      background: #e0f0ff;
-      border: 1px solid #b0d4f1;
-      border-radius: 10px;
-      padding: 8px 12px;
+      background: #d4edda;
+      border: 2px dashed #28a745;
+      border-radius: 15px;
+      padding: 14px 20px;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: all 0.4s ease;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     .suggestion:hover {
-      background: #cce6ff;
+      background: #bff0c7;
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
     }
     #messages {
       flex: 1;
@@ -113,7 +121,7 @@
       padding: 10px 20px;
       border: none;
       border-radius: 10px;
-      background: #1a73e8;
+      background: #28a745;
       color: white;
       font-size: 16px;
       cursor: pointer;
@@ -130,7 +138,7 @@
       padding: 12px 24px;
       font-size: 18px;
       font-weight: bold;
-      background-color: #ff9800;
+      background-color: #4caf50;
       border: none;
       border-radius: 8px;
       color: white;
@@ -140,12 +148,10 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
-
     @keyframes fadeInUp {
       0% { opacity: 0; transform: translateY(20px); }
       100% { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes slideDown {
       0% { transform: translateY(-30px); opacity: 0; }
       100% { transform: translateY(0); opacity: 1; }
@@ -159,10 +165,10 @@
   <p class="description">Organiza tu menú semanal con recetas deliciosas, listas de la compra optimizadas y consejos para ahorrar sin renunciar al sabor. ¡Tu asistente personal de cocina inteligente!</p>
   <div class="chat-container">
     <div id="suggestions">
-      <div class="suggestion">Menú barato para dos personas</div>
-      <div class="suggestion">Recetas sin horno para picnic</div>
-      <div class="suggestion">Lista para 5 comidas en oficina</div>
-      <div class="suggestion">Ideas frías para el campo</div>
+      <div class="suggestion">🍽️ Menú barato para dos personas</div>
+      <div class="suggestion">🥗 Recetas sin horno para picnic</div>
+      <div class="suggestion">🧺 Lista para 5 comidas en oficina</div>
+      <div class="suggestion">❄️ Ideas frías para el campo</div>
     </div>
     <div id="messages"></div>
     <form id="inputForm">
@@ -175,7 +181,6 @@
     </div>
   </div>
 </div>
-
 <script>
   const form = document.getElementById('inputForm');
   const input = document.getElementById('userInput');
@@ -183,10 +188,8 @@
   const suggestions = document.getElementById('suggestions');
   const upgradePrompt = document.getElementById('upgradePrompt');
   const suggestionButtons = document.querySelectorAll('.suggestion');
-
   let messageCount = 0;
   const maxFreeMessages = 3;
-
   suggestionButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       input.value = btn.textContent;
@@ -194,30 +197,25 @@
       form.requestSubmit();
     });
   });
-
   input.addEventListener('input', () => {
     if (input.value.length > 0) {
       suggestions.style.display = 'none';
     }
   });
-
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (messageCount >= maxFreeMessages) {
       upgradePrompt.style.display = 'block';
       return;
     }
-
     const userMsg = input.value;
     appendMessage('user', userMsg);
     input.value = '';
-
     const res = await fetch('https://proyecto-queso-backend.onrender.com/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: userMsg })
     });
-
     const data = await res.json();
     if (data.status === 'ok') {
       appendMessage('bot', data.reply);
@@ -226,7 +224,6 @@
       appendMessage('bot', data.message || 'Error desconocido.');
     }
   });
-
   function appendMessage(role, text) {
     const div = document.createElement('div');
     div.className = 'message';
